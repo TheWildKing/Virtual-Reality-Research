@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.0.3/aframe.min.js"></script>
+    <script src="play-all-model-animations.js"></script>
+    <script src="https://unpkg.com/aframe-physics-system@1.4.0/dist/aframe-physics-system.min.js"></script>
+    <script src="play-on-window-click.js"></script>
+    <script src="hide-once-playing.js"></script>
+    <script src="play-on-vrdisplayactivate-or-enter-vr.js"></script>
+
+    <script>
+      AFRAME.registerComponent('modify-materials', {
+        init: function () {
+          // Wait for model to load.
+          this.el.addEventListener('model-loaded', () => {
+            // Grab the mesh / scene.
+            const obj = this.el.getObject3D('mesh');
+            // Go over the submeshes and modify materials we want.
+            obj.traverse(node => {
+              if (node.name.indexOf('ship') !== -1) {
+                node.material.color.set('blue');
+              }
+            });
+          });
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <a-scene physics background="color: #ECECEC">
+      <a-assets>
+        <!-- i do not own any of this but it look cool, chill bro its fair use -->
+        <a-asset-item id="cityModel" src="https://cdn.aframe.io/test-models/models/glTF-2.0/virtualcity/VC.gltf"></a-asset-item> 
+        <img id ="sky" src="sky.png"></img>
+        <img id ="frame1" src="UX_Frame.png"></img>
+        <img id ="grid" src="grid1.png"></img>
+        <video id="mp4sky" autoplay loop="true" src="sky.mp4"> </video>
+		    <a-asset-item id="duck" src="duck.gltf"></a-asset-item>
+                <!-- Single source video. -->
+        <video id="video" style="display:none" 
+               autoplay loop crossorigin="anonymous" playsinline webkit-playsinline>
+          <!-- MP4 video source. -->
+          <source type="video/mp4"
+               src="https://ucarecdn.com/fadab25d-0b3a-45f7-8ef5-85318e92a261/" />
+        </video>
+
+		</a-assets>
+
+    <!-- The original example also has this 180 degree rotation, to appear to be going forward. -->
+      <a-videosphere rotation="0 180 0" src="#video" 
+                     play-on-window-click
+                     play-on-vrdisplayactivate-or-enter-vr>
+      </a-videosphere>
+      
+      <!-- Define camera with zero user height, movement disabled and arrow key rotation added. -->
+      <a-camera user-height="0" wasd-controls-enabled="false" arrow-key-rotation>
+        <!-- Text element for display messaging.  Hide once video is playing. -->
+        <a-entity id="msg" position="0 -0.3 -1.5" text="align:center; 
+                width:3;
+                wrapCount:100;
+                color:red"
+                hide-once-playing="#video">
+        </a-entity>
+      </a-camera>      
+
+		<!--<a-entity gltf-model="#cityModel" play-all-model-animations modify-materials></a-entity> // joker from persona 5 big big city -->
+		<a-entity gltf-model="#duck" position="0 0 -4" rotation="0 270 0" static-body></a-entity>
+    <a-box position="-1 4 -3" rotation="0 45 0" color="#4CC3D9" dynamic-body></a-box> <!-- IT'S GARBAGE DAY!! --> 
+		<a-entity laser-controls="hand: left"></a-entity>
+		<a-entity laser-controls="hand: right"></a-entity> <!-- oculus rift support for over 9000 oculuses.... PENDING! :D (literally) -->
+    <!-- <a-sky src="#sky"></a-sky>
+
+    <a-plane position="0 0 -4" rotation="-90 0 0" width="50" height="50" repeat="5 5" color="#CCC" static-body src="#grid"></a-plane>  sea green: #7BC8A4 -->
+
+    <!--  <a-videosphere src="#mp4sky" static-body></a-videosphere>  WHAT IS THIS, SOME SORT OF IMAX THEATRE TO YOU? -->
+    </a-scene>
+  </body>
+</html>
